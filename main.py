@@ -57,6 +57,22 @@ def save_password():
             password_entry.delete(0,END)
             messagebox.showinfo(title="Success",message="You saved your details successfully!")
 
+def find_password():
+    try:
+        with open("data.json","r")as data_file:
+            data = json.load(data_file)
+            search_ele = website_entry.get()
+    except FileNotFoundError:
+        messagebox.showinfo(title="Error",message="No Data File Found!")
+    if search_ele in data:
+        email = data[search_ele]["email"]
+        password = data[search_ele]["password"]
+        messagebox.showinfo(title="Website", message=f"Email: {email} \n Password: {password}")
+
+    else:
+            messagebox.showinfo(title="Failed",message="Please enter the valid website name!")
+
+
 
 
 # ---------------------------- UI SETUP ------------------------------- #
@@ -71,9 +87,13 @@ canvas.grid(row=0,column=1)
 
 website_label = Label(text="Website:")
 website_label.grid(row=1,column=0)
-website_entry = Entry(width=35)
-website_entry.grid(row=1,column=1,columnspan=2)
+website_entry = Entry(width=25)
+website_entry.grid(row=1,column=1)
 website_entry.focus()
+
+search_button = Button(text="Search",command=find_password)
+search_button.grid(row=1,column=2,columnspan=1)
+
 
 email_label = Label(text="Username/E-mail:")
 email_label.grid(row=2,column=0)
