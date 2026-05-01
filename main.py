@@ -2,6 +2,7 @@ from tkinter import *
 from tkinter import messagebox
 from random import randint,choice, shuffle
 import pyperclip
+import json
 from click import command
 
 
@@ -26,7 +27,12 @@ def save_password():
     website = website_entry.get()
     email = email_entry.get()
     password = password_entry.get()
-
+    new_dict = {
+        website:    {
+                    "email":email,
+                     "password":password,
+        },
+    }
 
     if len(email)==0 or len(password)==0 or website ==0:
         messagebox.showwarning(title="Ops", message="Please don't leave any field empty!")
@@ -36,8 +42,17 @@ def save_password():
                                                           f"Password: {password}\n Is it ok to save?")
 
     if is_ok:
-        with open("data.txt","a" ) as file:
-            file.write(f"{website} | {email} | {password}\n")
+        try:
+            with open("data.json","r") as data_file:
+                data = json.load(data_file)
+        except FileNotFoundError:
+            with open("data.json","w" ) as data_file:
+                json.dump(new_dict,data_file,indent=4)
+        else:
+            data.update(new_dict)
+            with open("data.json",'w')as data_file:
+                json.dump(data,data_file,indent=4)
+        finally:
             website_entry.delete(0,END)
             password_entry.delete(0,END)
             messagebox.showinfo(title="Success",message="You saved your details successfully!")
